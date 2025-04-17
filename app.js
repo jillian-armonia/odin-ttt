@@ -99,7 +99,7 @@ const GameLogic = function(gameboard, row, column, player){
         let diag2 = [[0, 2], [2, 0]];
 
         if (board[1][1] == player.symbol){
-            if (diag1.every(pair => board[pair[0]][pair[1]] == player.symbol)){
+            if (diag1.every(pair => board[pair[0]][pair[1]] == player.symbol) || diag2.every(pair => board[pair[0]][pair[1]] == player.symbol)){
                 return player.symbol;
             } else false
         }
@@ -122,8 +122,12 @@ const GameLogic = function(gameboard, row, column, player){
 }
 
 const gameplay = Game;
-gameplay.playRound(0,0);
-gameplay.playRound(2,1);
+gameplay.playRound(2,0);
+gameplay.playRound(0,2);
 gameplay.playRound(1,1);
-gameplay.playRound(1,2);
 gameplay.playRound(2,2);
+gameplay.playRound(1,2);
+gameplay.playRound(1,0);
+gameplay.playRound(0,1);
+gameplay.playRound(2,1);
+gameplay.playRound(0,0);
