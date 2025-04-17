@@ -10,17 +10,21 @@ const Gameboard = (function(){
     const getBoard = () => board;
 
     const placeMove = (row, column, player) => {
-        if (!board[row][column]){
-            board[row][column] = player.symbol;
-        } else {
-            console.log(board);
-            console.log("Invalid move");
-        }
+        board[row][column] = player.symbol;
+    }
+
+    const checkAvailable = () => {
+        let counter = 0;
+        board.forEach(row => row.forEach(cell => {
+            if (!cell) counter++;
+        }));
+        return counter;
     }
 
     return {
         getBoard,
         placeMove,
+        checkAvailable,
     }
 })();
 
@@ -46,8 +50,18 @@ const Game = (function(playerOne = "Player One", playerTwo = "Player Two"){
     }
 
     const playRound = (row, column) => {
-        board.placeMove(row, column, getActivePlayer());
-        switchPlayers();
+        if (!board.getBoard()[row][column]){
+            let logic = GameLogic(board, row, column, getActivePlayer());
+            board.placeMove(row, column, getActivePlayer());
+            if (logic.winOrTie()){
+                console.log(board.getBoard());
+                return
+            } else switchPlayers();
+        } else {
+            printRound();
+            console.log("Last move was invalid")
+        }
+
     }
 
     const printRound = () => {
@@ -63,7 +77,53 @@ const Game = (function(playerOne = "Player One", playerTwo = "Player Two"){
     }
 })();
 
+const GameLogic = function(gameboard, row, column, player){
+    const winMessage = `${player.name} wins!`;
+    const tieMessage = `It's a tie!`;
+    const board = gameboard.getBoard();
+
+    const checkRow = () => {
+        if (board[row].every(value => value == player.symbol)) return player.symbol;
+        else false;
+    };
+
+    const checkColumn = () => {
+        for (let i = 0; i < 3; i++){
+            if (board[i][column] !== player.symbol) return false;
+        }
+        return player.symbol;
+    };
+
+    const checkDiag = () => {
+        let diag1 = [[0, 0], [2, 2]];
+        let diag2 = [[0, 2], [2, 0]];
+
+        if (board[1][1] == player.symbol){
+            if (diag1.every(pair => board[pair[0]][pair[1]] == player.symbol)){
+                return player.symbol;
+            } else false
+        }
+
+    }
+
+    const winOrTie = () => {
+        if (checkRow() || checkColumn() || checkDiag()){
+            console.log(winMessage);
+            return true;
+        } else if (gameboard.checkAvailable() <= 0){
+            console.log(tieMessage);
+            return true;
+        } else return false;
+    };
+
+    return {
+        winOrTie,
+    }
+}
+
 const gameplay = Game;
-console.log(Game.printRound())
-console.log(Game.playRound(0, 0));
-console.log(Game.playRound(2, 0));
+gameplay.playRound(0,0);
+gameplay.playRound(2,1);
+gameplay.playRound(1,1);
+gameplay.playRound(1,2);
+gameplay.playRound(2,2);
