@@ -45,7 +45,8 @@ const Game = (function(){
     const setPlayerName = (playerOne, playerTwo) => {
         players[0].name = playerOne;
         players[1].name = playerTwo;
-    }
+    };
+
     const getActivePlayer = () => players[turn];
 
     const switchPlayers = () => {
@@ -128,14 +129,13 @@ const GameLogic = function(gameboard, row, column, player){
     }
 }
 
-
 const Screen = (function(){
     const screenContainer = document.querySelector("#screen-container");
     const textContainer = document.querySelector("#text-container");
+    const game = Game;
 
     //Create an initial game board
     const initialize = () => {
-        //Use a loop with the end index of the array
         for (let row = 0; row < 3; row++){
             for (let col = 0; col < 3; col++){
                 let tile = document.createElement("div");
@@ -144,13 +144,21 @@ const Screen = (function(){
                 screenContainer.appendChild(tile);
             }
         }
-            //Create div with the id row-{rowNum}_col-{colNum}
-            //Append the div to the screen container
-        //Prompt the user to set the player names
-        //Create h2 element
-        //Get the activePlayer's name
-        //Set the name as the h2's innerText
-        //Append the h2
+
+        let player1 = prompt("Set player 1's name");
+        let player2 = prompt("Set player 2's name");
+
+        if (player1 && player2) game.setPlayerName(player1, player2);
+        const playerTurn = document.createElement("h2");
+        playerTurn.id = "player-turn";
+        textContainer.appendChild(playerTurn);
+        changePlayers();
+
+    }
+
+    const changePlayers = () => {
+        const playerTurn = document.querySelector("#player-turn");
+        playerTurn.innerText = `It's ${game.getActivePlayer().name}'s turn`;
     }
 
 
@@ -167,6 +175,7 @@ const Screen = (function(){
         //Set the innerHTML of the dialog with a <p> message and a close <button>
     return {
         initialize,
+        changePlayers,
     }
 })();
 
