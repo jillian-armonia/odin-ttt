@@ -28,20 +28,24 @@ const Gameboard = (function(){
     }
 })();
 
-const Game = (function(playerOne = "Player One", playerTwo = "Player Two"){
+const Game = (function(){
     let turn = 0;
     let board = Gameboard;
     const players = [
-        {
-            name: playerOne,
-            symbol: "O",
-        },
-        {
-            name: playerTwo,
-            symbol: "X",
-        }
-    ];
+            {
+                name: "Player One",
+                symbol: "O",
+            },
+            {
+                name: "Player Two",
+                symbol: "X",
+            }
+        ];
 
+    const setPlayerName = (playerOne, playerTwo) => {
+        players[0].name = playerOne;
+        players[1].name = playerTwo;
+    }
     const getActivePlayer = () => players[turn];
 
     const switchPlayers = () => {
@@ -53,10 +57,12 @@ const Game = (function(playerOne = "Player One", playerTwo = "Player Two"){
         if (!board.getBoard()[row][column]){
             let logic = GameLogic(board, row, column, getActivePlayer());
             board.placeMove(row, column, getActivePlayer());
+
             if (logic.winOrTie()){
                 console.log(board.getBoard());
                 return
             } else switchPlayers();
+
         } else {
             printRound();
             console.log("Last move was invalid")
@@ -70,6 +76,7 @@ const Game = (function(playerOne = "Player One", playerTwo = "Player Two"){
     }
 
     return {
+        setPlayerName,
         getActivePlayer,
         switchPlayers,
         playRound,
@@ -121,13 +128,46 @@ const GameLogic = function(gameboard, row, column, player){
     }
 }
 
-const gameplay = Game;
-gameplay.playRound(2,0);
-gameplay.playRound(0,2);
-gameplay.playRound(1,1);
-gameplay.playRound(2,2);
-gameplay.playRound(1,2);
-gameplay.playRound(1,0);
-gameplay.playRound(0,1);
-gameplay.playRound(2,1);
-gameplay.playRound(0,0);
+
+const Screen = (function(){
+    const screenContainer = document.querySelector("#screen-container");
+    const textContainer = document.querySelector("#text-container");
+
+    //Create an initial game board
+    const initialize = () => {
+        //Use a loop with the end index of the array
+        for (let row = 0; row < 3; row++){
+            for (let col = 0; col < 3; col++){
+                let tile = document.createElement("div");
+                tile.innerText = "X";
+                tile.id =  `row-${row}_col-${col}`;
+                screenContainer.appendChild(tile);
+            }
+        }
+            //Create div with the id row-{rowNum}_col-{colNum}
+            //Append the div to the screen container
+        //Prompt the user to set the player names
+        //Create h2 element
+        //Get the activePlayer's name
+        //Set the name as the h2's innerText
+        //Append the h2
+    }
+
+
+    //updateMove function - updates the screen container whenever someone makes a move
+        //Get the div through their id using the row and column numbers
+        //Set the innertext with the player's symbol
+
+    //updatePlayers function with player parameter
+        //Get the h2 element
+        //Set the name of the current activePlayer
+
+    //displayMessage function with message parameter
+        //Create a dialog element
+        //Set the innerHTML of the dialog with a <p> message and a close <button>
+    return {
+        initialize,
+    }
+})();
+
+window.addEventListener("load", Screen.initialize())
