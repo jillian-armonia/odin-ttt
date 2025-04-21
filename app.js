@@ -139,7 +139,7 @@ const Screen = (function(){
         for (let row = 0; row < 3; row++){
             for (let col = 0; col < 3; col++){
                 let tile = document.createElement("div");
-                tile.innerText = "X";
+                tile.innerText = "Y";
                 tile.id =  `row-${row}_col-${col}`;
                 screenContainer.appendChild(tile);
             }
@@ -161,14 +161,12 @@ const Screen = (function(){
         playerTurn.innerText = `It's ${game.getActivePlayer().name}'s turn`;
     }
 
+    const updateMove = (selectedTile) => {
+        selectedTile.innerText = game.getActivePlayer().symbol;
+        let rowCol = selectedTile.id.match(/\d+/g);
+        game.playRound(Number(rowCol[0]), Number(rowCol[1]));
 
-    //updateMove function - updates the screen container whenever someone makes a move
-        //Get the div through their id using the row and column numbers
-        //Set the innertext with the player's symbol
-
-    //updatePlayers function with player parameter
-        //Get the h2 element
-        //Set the name of the current activePlayer
+    }
 
     //displayMessage function with message parameter
         //Create a dialog element
@@ -176,7 +174,13 @@ const Screen = (function(){
     return {
         initialize,
         changePlayers,
+        updateMove,
     }
 })();
 
 window.addEventListener("load", Screen.initialize())
+document.addEventListener("click", (e) => {
+    if (e.target.parentNode.id == "screen-container" && e.target.innerText == "Y"){
+        Screen.updateMove(e.target);
+    }
+})
