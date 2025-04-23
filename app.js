@@ -62,7 +62,10 @@ const Game = (function(){
             if (logic.winOrTie()){
                 console.log(board.getBoard());
                 return
-            } else switchPlayers();
+            } else {
+                switchPlayers();
+                Screen.changePlayers();
+            }
 
         } else {
             printRound();
@@ -117,9 +120,11 @@ const GameLogic = function(gameboard, row, column, player){
     const winOrTie = () => {
         if (checkRow() || checkColumn() || checkDiag()){
             console.log(winMessage);
+            Screen.displayMessage(winMessage);
             return true;
         } else if (gameboard.checkAvailable() <= 0){
             console.log(tieMessage);
+            Screen.displayMessage(tieMessage);
             return true;
         } else return false;
     };
@@ -165,16 +170,29 @@ const Screen = (function(){
         selectedTile.innerText = game.getActivePlayer().symbol;
         let rowCol = selectedTile.id.match(/\d+/g);
         game.playRound(Number(rowCol[0]), Number(rowCol[1]));
-
     }
 
     //displayMessage function with message parameter
-        //Create a dialog element
-        //Set the innerHTML of the dialog with a <p> message and a close <button>
+    const displayMessage = (message) => {
+        const messageDisplay = document.createElement("dialog");
+        const playAgain = document.createElement("button");
+        playAgain.innerText = "Play again?";
+        playAgain.onclick = () => {
+            messageDisplay.close();
+            window.location.reload();
+        }
+
+        messageDisplay.innerHTML = `<p>${message}</p>`;
+        messageDisplay.appendChild(playAgain);
+        document.body.appendChild(messageDisplay);
+        messageDisplay.showModal();
+    }
+
     return {
         initialize,
         changePlayers,
         updateMove,
+        displayMessage,
     }
 })();
 
