@@ -1,0 +1,68 @@
+:root{
+    --player-one: rgb(245, 113, 113);
+    --player-two: rgb(115, 187, 255);
+}
+
+body{
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#screen-container{
+    height: 75vh;
+    aspect-ratio: 1 / 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
+    justify-items: center;
+    align-items: center;
+    font-size: 6rem;
+    border: solid rgb(65, 50, 25) 10px;
+    font-family: "Shizuru";
+    background-color: rgb(103, 150, 103);
+}
+
+#screen-container div {
+    width: 100%;
+    height: 100%;
+    border: solid rgb(65, 50, 25) 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    color: whitesmoke;
+}
+
+.player-one:hover{
+    background-color: var(--player-one);
+}
+
+.player-two:hover{
+    background-color: var(--player-two);
+}
+
+#text-container{
+    font-family: "Lexend Exa";
+    font-size: 1.8rem;
+}
+
+dialog{
+    width: 20vw;
+    aspect-ratio: 1 / 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    font-family: "Lexend Exa";
+}
+
+dialog button{
+    font-family: "Lexend Exa";
+    font-size: 1.2rem;
+    padding: 10px;
+    cursor: pointer;
+}

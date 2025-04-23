@@ -61,7 +61,7 @@ const Game = (function(){
 
             if (logic.winOrTie()){
                 console.log(board.getBoard());
-                return
+                return logic.winOrTie();
             } else {
                 switchPlayers();
                 Screen.changePlayers();
@@ -121,11 +121,11 @@ const GameLogic = function(gameboard, row, column, player){
         if (checkRow() || checkColumn() || checkDiag()){
             console.log(winMessage);
             Screen.displayMessage(winMessage);
-            return true;
+            return player.symbol;
         } else if (gameboard.checkAvailable() <= 0){
             console.log(tieMessage);
             Screen.displayMessage(tieMessage);
-            return true;
+            return "tie";
         } else return false;
     };
 
@@ -144,7 +144,9 @@ const Screen = (function(){
         for (let row = 0; row < 3; row++){
             for (let col = 0; col < 3; col++){
                 let tile = document.createElement("div");
-                tile.innerText = "Y";
+                tile.classList.add("tile")
+                tile.classList.add("player-one");
+                tile.innerText = "";
                 tile.id =  `row-${row}_col-${col}`;
                 screenContainer.appendChild(tile);
             }
@@ -154,6 +156,7 @@ const Screen = (function(){
         let player2 = prompt("Set player 2's name");
 
         if (player1 && player2) game.setPlayerName(player1, player2);
+
         const playerTurn = document.createElement("h2");
         playerTurn.id = "player-turn";
         textContainer.appendChild(playerTurn);
@@ -163,18 +166,47 @@ const Screen = (function(){
 
     const changePlayers = () => {
         const playerTurn = document.querySelector("#player-turn");
+        const tiles = document.querySelectorAll("div.tile");
+        if (game.getActivePlayer().symbol == "O"){ //Change hover color
+            tiles.forEach(tile => {
+                tile.classList.remove("player-two");
+                tile.classList.add("player-one");
+            });
+        } else {
+            tiles.forEach(tile => {
+                tile.classList.remove("player-one");
+                tile.classList.add("player-two");
+            });
+        }
         playerTurn.innerText = `It's ${game.getActivePlayer().name}'s turn`;
     }
 
     const updateMove = (selectedTile) => {
         selectedTile.innerText = game.getActivePlayer().symbol;
         let rowCol = selectedTile.id.match(/\d+/g);
-        game.playRound(Number(rowCol[0]), Number(rowCol[1]));
+        const round = game.playRound(Number(rowCol[0]), Number(rowCol[1]));
+        
+        //Set the dialog bg according to winner color
+        const styleSheet = window.document.styleSheets[0];
+        let winnerColor;
+        if (round == "O") {
+            winnerColor = "var(--player-one)";
+        } else if (round == "X") {
+            winnerColor = "var(--player-two)";
+        } else if (round == "tie") {
+            winnerColor = "lightgray";
+        }
+
+        styleSheet.insertRule(`::backdrop{
+            background-color: ${winnerColor};
+            opacity: 0.90;
+            }`, styleSheet.cssRules.length);
     }
 
-    //displayMessage function with message parameter
     const displayMessage = (message) => {
         const messageDisplay = document.createElement("dialog");
+        messageDisplay.innerHTML = `<p>${message}</p>`;
+        //Set play again button
         const playAgain = document.createElement("button");
         playAgain.innerText = "Play again?";
         playAgain.onclick = () => {
@@ -182,7 +214,6 @@ const Screen = (function(){
             window.location.reload();
         }
 
-        messageDisplay.innerHTML = `<p>${message}</p>`;
         messageDisplay.appendChild(playAgain);
         document.body.appendChild(messageDisplay);
         messageDisplay.showModal();
@@ -198,7 +229,7 @@ const Screen = (function(){
 
 window.addEventListener("load", Screen.initialize())
 document.addEventListener("click", (e) => {
-    if (e.target.parentNode.id == "screen-container" && e.target.innerText == "Y"){
+    if (e.target.parentNode.id == "screen-container" && e.target.innerText == ""){
         Screen.updateMove(e.target);
     }
 })
